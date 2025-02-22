@@ -30,3 +30,7 @@ async:
 logging:
   level:
     org.springframework: DEBUG
+
+jwt:
+  secret: 5X5XfV+e8W+FhKfdfDf4JgTyzLSmg3Nfb3hLbn5c2HI=
+  expiration: 3600
