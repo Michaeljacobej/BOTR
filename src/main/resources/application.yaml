@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: employee-management-backend
+  profiles:
+    active: dev1
+  main:
+    allow-circular-references: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      generate-ddl: true
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update
+        hbm2ddl:
+          auto: update
+          create-namespaces: true
+        show-sql: true
+        format-sql: true
+      open-in-view: false
+
+async:
+  pool:
+    size: 5
+
+logging:
+  level:
+    org.springframework: DEBUG
