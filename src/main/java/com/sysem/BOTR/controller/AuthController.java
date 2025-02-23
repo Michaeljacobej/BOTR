@@ -1,18 +1,12 @@
 package com.sysem.BOTR.controller;
 
+import com.sysem.BOTR.models.dto.response.ResponseOutput;
 import com.sysem.BOTR.models.entity.Users;
-import com.sysem.BOTR.repository.UserRepository;
 import com.sysem.BOTR.service.AuthService;
-import com.sysem.BOTR.util.JwtUtil;
-import org.apache.catalina.User;
+import com.sysem.BOTR.service.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,14 +16,22 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Users user) {
-        return ResponseEntity.ok(authService.registerUser(user));
+    public ResponseEntity<?> register(@RequestBody Users user)  throws  Exception {
+        ResponseOutput responseOutput = authService.registerUser(user);
+        return ResponseEntity.ok(responseOutput);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Users user) {
-        return ResponseEntity.ok(authService.loginUser(user));
+    public ResponseEntity<?> login(@RequestBody Users user)  throws  Exception {
+        ResponseOutput responseOutput = authService.loginUser(user);
+        return ResponseEntity.ok(responseOutput);
 }
 
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader)  throws  Exception {
+        ResponseOutput responseOutput = authService.logoutUser(authHeader);
+        return ResponseEntity.ok(responseOutput);
+    }
 
 }

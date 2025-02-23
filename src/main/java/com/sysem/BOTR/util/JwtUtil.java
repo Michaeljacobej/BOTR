@@ -40,6 +40,15 @@ public class JwtUtil {
                 .compact();
     }
 
+    public Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
     public String extractEmail(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)

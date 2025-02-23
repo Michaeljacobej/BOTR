@@ -2,9 +2,12 @@ package com.sysem.BOTR.controller;
 
 import com.sysem.BOTR.constant.ReactionType;
 import com.sysem.BOTR.models.dto.FeedbackMatric;
-import com.sysem.BOTR.service.ReactionService;
+import com.sysem.BOTR.models.dto.response.ResponseOutput;
+import com.sysem.BOTR.service.AuthServiceImpl;
+import com.sysem.BOTR.service.ReactionServiceImpl;
 import com.sysem.BOTR.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,18 +16,25 @@ import org.springframework.web.bind.annotation.*;
 public class ReactionController {
 
     @Autowired
-    private ReactionService reactionService;
+    private ReactionServiceImpl reactionService;
 
+    @Autowired
+    private AuthServiceImpl authService;
     @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping("/vote")
-    public ResponseEntity<String> vote(
+    public ResponseEntity<?> vote(
             @RequestHeader("Authorization") String authHeader,
             @RequestHeader("topicId") Long topicId,
             @RequestHeader("reactionType") String reactionTypeStr
-    ) {
+    ) throws  Exception {
         String token = authHeader.substring(7);
+
+        if (authService.isTokenBlacklisted(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token has been revoked. Please log in again.");
+        }
+
         String userEmail = jwtUtil.extractEmail(token);
 
         ReactionType reactionType;
@@ -34,8 +44,9 @@ public class ReactionController {
             return ResponseEntity.badRequest().body("Invalid reaction type. Use 'LIKE' or 'DISLIKE'.");
         }
 
-        String response = reactionService.addOrUpdateReaction(userEmail, topicId, reactionType);
-        return ResponseEntity.ok(response);
+        ResponseOutput responseOutput  = reactionService.addOrUpdateReaction(userEmail, topicId, reactionType);
+
+        return ResponseEntity.ok(responseOutput);
     }
 
     @GetMapping("/feedback")

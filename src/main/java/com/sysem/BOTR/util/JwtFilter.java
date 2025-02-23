@@ -1,5 +1,6 @@
 package com.sysem.BOTR.util;
 
+import com.sysem.BOTR.service.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private AuthServiceImpl authService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -34,6 +37,13 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
+
+        if (authService.isTokenBlacklisted(token)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token has been revoked. Please log in again.");
+            return;
+        }
+
         String email = jwtUtil.extractEmail(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
