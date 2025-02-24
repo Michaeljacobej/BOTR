@@ -42,13 +42,9 @@ public class ReactionServiceImpl implements  ReactionService{
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new RuntimeException("Topic not found"));
 
-        long todayVotes = reactionRepository.countTodayVotes(user, LocalDate.now());
-        if (todayVotes >= MAX_VOTES_PER_DAY) {
-            return new ResponseOutput(
-                    responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS), "Vote limit exceeded for today.");
-        }
-
         Optional<Reaction> existingReaction = reactionRepository.findByUserAndTopic(user, topic);
+        long todayVotes = reactionRepository.countTodayVotes(user, LocalDate.now());
+
 
         if (existingReaction.isPresent()) {
             Reaction reaction = existingReaction.get();
@@ -63,13 +59,18 @@ public class ReactionServiceImpl implements  ReactionService{
                 reaction.setReactionDate(LocalDate.now());
                 reactionRepository.save(reaction);
                 updateTopicMetrics(topic);
-
                 return new ResponseOutput(
                         responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS), "Reaction updated.");
-
             }
         }
 
+
+        if (todayVotes >= MAX_VOTES_PER_DAY) {
+            return new ResponseOutput(
+                    responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS), "Vote limit exceeded for today.");
+        }
+
+        // Otherwise, allow voting for a new topic
         Reaction newReaction = new Reaction();
         newReaction.setUser(user);
         newReaction.setTopic(topic);
@@ -80,7 +81,7 @@ public class ReactionServiceImpl implements  ReactionService{
         updateTopicMetrics(topic);
 
         return new ResponseOutput(
-                responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS), "Reaction added.!");
+                responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS), "Reaction added.");
     }
 
 
