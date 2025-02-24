@@ -1,6 +1,7 @@
 package com.sysem.BOTR.service;
 
 import com.sysem.BOTR.constant.ErrorConstant;
+import com.sysem.BOTR.models.dto.ListTopic;
 import com.sysem.BOTR.models.dto.response.ResponseOutput;
 import com.sysem.BOTR.models.entity.Topic;
 import com.sysem.BOTR.models.entity.Users;
@@ -9,6 +10,11 @@ import com.sysem.BOTR.repository.UserRepository;
 import com.sysem.BOTR.util.HelperResponseOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -35,7 +41,29 @@ public class TopicServiceImpl implements  TopicService {
                 responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS), "add Topic Success!");
     }
 
-    public List<Topic> getAllTopics() {
-        return topicRepository.findAll();
+
+    @Override
+    public ResponseOutput getAllTopics() {
+        List<ListTopic> listOfTopics = topicRepository.findAll()
+                .stream()
+                .map(topic -> {
+                    ListTopic listTopic = new ListTopic();
+                    listTopic.setTopicId(topic.getTopicId());
+                    listTopic.setTittle(topic.getTitle());
+                    listTopic.setCreatedBy(topic.getUser().getFullname());
+                    listTopic.setDescription(topic.getDescription());
+                    listTopic.setLikesCount(topic.getLikesCount());
+                    listTopic.setDislikeCount(topic.getDislikesCount());
+                    return listTopic;
+                })
+                .collect(Collectors.toList());
+
+        return new ResponseOutput(
+                responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS),
+                listOfTopics
+        );
     }
+
+
+
 }

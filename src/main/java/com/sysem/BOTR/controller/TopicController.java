@@ -41,7 +41,8 @@ public class TopicController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Topic>> getAllTopics() {
-        return ResponseEntity.ok(topicService.getAllTopics());
+    public ResponseEntity<?> getAllTopics()  throws  Exception{
+        ResponseOutput responseOutput =topicService.getAllTopics();
+        return ResponseEntity.ok(responseOutput);
     }
 }

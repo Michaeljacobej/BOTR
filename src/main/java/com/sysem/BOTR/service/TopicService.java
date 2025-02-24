@@ -6,4 +6,6 @@ import com.sysem.BOTR.models.entity.Users;
 
 public interface TopicService {
     ResponseOutput addTopic(String email, Topic topic) throws Exception;
+
+    ResponseOutput getAllTopics()throws Exception;
 }
