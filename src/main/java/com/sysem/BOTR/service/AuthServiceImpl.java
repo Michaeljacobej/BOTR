@@ -31,9 +31,23 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseOutput loginUser(Users users) throws Exception {
+        if (users == null || users.getEmail() == null || users.getEmail().trim().isEmpty()) {
+            return new ResponseOutput(responseOutput.errorSchema(ErrorConstant.EMAIL_REQUIRED), null);
+        }
+        if (users.getPassword() == null || users.getPassword().trim().isEmpty()) {
+            return new ResponseOutput(responseOutput.errorSchema(ErrorConstant.PASSWORD_REQUIRED), null);
+        }
+
+        // Check if email exists in database
         Optional<Users> userOptional = userRepository.findByEmail(users.getEmail());
-        if (userOptional.isEmpty() || !passwordEncoder.matches(users.getPassword(), userOptional.get().getPassword())) {
-            throw new RuntimeException("Invalid email or password.");
+        if (userOptional.isEmpty()) {
+            return new ResponseOutput(responseOutput.errorSchema(ErrorConstant.EMAIL_NOT_FOUND), null);
+        }
+
+        // Validate password
+        Users user = userOptional.get();
+        if (!passwordEncoder.matches(users.getPassword(), user.getPassword())) {
+            return new ResponseOutput(responseOutput.errorSchema(ErrorConstant.INCORRECT_PASSWORD), null);
         }
 
         return new ResponseOutput(
@@ -43,7 +57,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseOutput registerUser(Users user) throws Exception {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already in use.");
+            return new ResponseOutput(responseOutput.errorSchema(ErrorConstant.EMAIL_HAVE_BEEN_REGISTERED), null);
+
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);

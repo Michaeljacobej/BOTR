@@ -67,7 +67,7 @@ public class ReactionServiceImpl implements  ReactionService{
 
         if (todayVotes >= MAX_VOTES_PER_DAY) {
             return new ResponseOutput(
-                    responseOutput.errorSchema(ErrorConstant.REQUEST_SUCCESS), "Vote limit exceeded for today.");
+                    responseOutput.errorSchema(ErrorConstant.VOTE_LIMIT_EXCEEDED), "Vote limit");
         }
 
         // Otherwise, allow voting for a new topic
