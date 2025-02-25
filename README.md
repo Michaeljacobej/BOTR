@@ -45,25 +45,21 @@ This project is a **React + TypeScript + Vite** application with **Ant Design (A
 ### 📦 Frontend
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-repo/topic-management.git
+   git clone https://github.com/Michaeljacobej/Topic-Reaction.git
    ```
-2. Navigate to the frontend directory:
-   ```sh
-   cd frontend
-   ```
-3. Install dependencies:
+2. Install dependencies:
    ```sh
    npm install
    ```
-4. Run the application:
+3. Run the application:
    ```sh
    npm run dev
    ```
 
 ### 🖥 Backend
-1. Navigate to the backend directory:
+1. Clone the repository:
    ```sh
-   cd backend
+   git clone https://github.com/Michaeljacobej/BOTR.git
    ```
 2. Build the project:
    ```sh
