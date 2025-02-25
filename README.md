@@ -75,10 +75,7 @@ This project is a **React + TypeScript + Vite** application with **Ant Design (A
 ## 🌎 Localization (i18n)
 This project supports **English** and **Italian** translations using `i18next`. To change the language, switch using the toggle in the UI.
 
----
 
-## 📄 License
-This project is licensed under the MIT License.
 
 ---
 
